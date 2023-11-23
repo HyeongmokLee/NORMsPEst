@@ -1,0 +1,25 @@
+# Data loading ; minority class (concentration of uranium > threshold), majority class (concentration of uranium < threshold)
+data = pd.read_csv('./Data/Radon.txt', sep='  ', names=['G_label','Depth','T','pH','Eh','EC','DO','HCO3','uranium'])
+
+# Hyperparameter
+  total = 0
+  N = 1000
+
+# Normalization (0 ~ 1) of data
+  y = data['uranium']
+  num_data = data.drop(['uranium'], axis=1)
+  def f(s):
+      return (s-s.min())/(s.max()-s.min())
+  x_normalization = num_data.apply(f, axis=0)
+
+# RF Performance of Random-undersampling
+  for i in range(0,N):
+      rus = RandomUnderSampler(random_state = i , replacement=False, sampling_strategy='majority')
+      X_resampled, y_resampled = rus.fit_resample(x_normalization, y)
+      X_resampled, y_resampled = rus.fit_resample(x_normalization, y)
+      X_train, X_test, Y_train, Y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=20)
+      rf.fit(X_train, Y_train)
+      Pred = rf.predict(X_test)
+      # print("Accuracy : {0:.3f}".format(accuracy_score(Y_test, Pred)))
+      total = total + accuracy_score(Y_test, Pred)
+  print(total/N)
