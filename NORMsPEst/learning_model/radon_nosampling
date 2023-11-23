@@ -1,0 +1,25 @@
+import pandas as pd
+from sklearn.metrics import confusion_matrix, accuracy_score, roc_auc_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+
+# Data loading ; minority class (concentration of radon > threshold), majority class (concentration of radon < threshold)
+data = pd.read_csv('./Data/Radon.txt', sep='  ', names=['G_label','Depth','T','pH','Eh','EC','DO','HCO3','Radon'])
+
+# Normalization (0 ~ 1) of data
+  y = data['Radon']
+  num_data = data.drop(['Radon'], axis=1)
+  def f(s):
+      return (s-s.min())/(s.max()-s.min())
+  x_normalization = num_data.apply(f, axis=0)
+
+# Hold-out
+X_train, X_test, Y_train, Y_test = train_test_split(x_normalization, y, test_size=0.2, random_state=20)
+
+# RF Performance 
+rf = RandomForestClassifier(random_state=0)
+rf.fit(X_train, Y_train)
+Pred = rf.predict(X_test)
+print("Accuracy : {0:.3f}".format(accuracy_score(Y_test, Pred)))
+print('Num_test: ',np.shape(Pred))
+print(confusion_matrix(Y_test, Pred))
