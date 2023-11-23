@@ -1,6 +1,6 @@
 **MAIN INFO**
 
-The codes can be used for the statistical and machine learning analysis of the water quality data. Overall, it is based on scikit-learn libraries.
+The codes can be used for the machine learning analysis of the water quality data. Overall, it is based on scikit-learn libraries.
 
 Name of the software: Python
 
