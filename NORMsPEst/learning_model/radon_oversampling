@@ -8,12 +8,12 @@ from sklearn.ensemble import RandomForestClassifier
 data = pd.read_csv('./Data/Radon.txt', sep='  ', names=['G_label','Depth','T','pH','Eh','EC','DO','HCO3','Radon'])
 
 # Prepare for stratified cross validation(SCV) dataset
-  dan_Rn = data[data['Rn'] == 1]
-  safe_Rn = data[data['Rn'] == 0]
-  dan_y = dan_Rn['Rn']
-  dan_x = dan_Rn.drop(['Rn'], axis=1)
-  safe_y = safe_Rn['Rn']
-  safe_x = safe_Rn.drop(['Rn'], axis=1)
+  dan_Rn = data[data['Radon'] == 1]
+  safe_Rn = data[data['Radon'] == 0]
+  dan_y = dan_Rn['Radon']
+  dan_x = dan_Rn.drop(['Radon'], axis=1)
+  safe_y = safe_Rn['Radon']
+  safe_x = safe_Rn.drop(['Radon'], axis=1)
 
 # Noramalization (0 ~ 1) of data
   def f(s):
