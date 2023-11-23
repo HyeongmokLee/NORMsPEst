@@ -5,6 +5,7 @@ from sklearn.preprocessing import MinMaxScaler
 # Hyperparameter
 cl = 100 
 dim_output = 2
+n_trn_rate = 0.8
 
 # Normalization (0 ~ 1) of data
 def normalization(dat):
@@ -35,6 +36,8 @@ non_excss_dat = dat_raw[is_non_excss, :]
         expl = dat[:, 4:]  # applied explanatory variables
         loc_idx = dat[:, 0:1]  # location index
         n_dat = np.shape(dat)[0]
+
+        # Hold-out
         n_trn = np.int(np.floor(n_trn_rate * n_dat))
         n_tst = n_dat - n_trn
         n_rock = np.int(np.max(dat[:, 1]))  # number of rock type
