@@ -1,5 +1,7 @@
 import pandas as pd
 from imblearn.under_sampling import RandomUnderSampler
+from sklearn.metrics import confusion_matrix, accuracy_score, roc_auc_score
+from sklearn.ensemble import RandomForestClassifier
 
 # Data loading ; minority class (concentration of uranium > threshold), majority class (concentration of uranium < threshold)
 data = pd.read_csv('./Data/Radon.txt', sep='  ', names=['G_label','Depth','T','pH','Eh','EC','DO','HCO3','uranium'])
