@@ -92,7 +92,7 @@ if run_flg == 0:
             else:
                 T[i, :] = [0, 1]
 
-        # other X variables (T, pH, Eh, EC, DO) + dummy variables
+        # other X variables + dummy variables
         XX = np.concatenate((dum, expl_norm), axis=1)
         shff_no = np.random.permutation(XX.shape[0])
         IN = XX[shff_no, :]
@@ -118,11 +118,6 @@ if run_flg == 0:
         print("=" * 100)
         print(con)
         print("Accuracy is {} %.".format(sum(np.diag(con)) / sum(sum(con)) * 100))
-        if sum(np.diag(con)) / sum(sum(con)) * 100 > 72:
-            train_mat = np.concatenate((loc_idx[:n_trn], tgt[:n_trn], x_train), axis=1)
-            test_mat = np.concatenate((loc_idx[n_trn:], tgt[n_trn:], x_test, y_pred, prd_label), axis=1)
-            np.savetxt(train_file_nam, train_mat)
-            np.savetxt(test_file_nam, test_mat)
 
 elif run_flg == 1:
     # 2. Data
