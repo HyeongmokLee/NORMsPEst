@@ -46,32 +46,49 @@ dan_x5 = X_train
 dan_y5 = Y_train
 
 # Making Stratified cross validation dataset
-# CV1
+# SCV1
 Test_x1 = pd.concat([safe_x1, dan_x1])
 Test_y1 = pd.concat([safe_y1, dan_y1])
 Train_x1 = pd.concat([safe_x2, safe_x3, safe_x4, safe_x5, dan_x2, dan_x3, dan_x4, dan_x5])
 Train_y1 = pd.concat([safe_y2, safe_y3, safe_y4, safe_y5, dan_y2, dan_y3, dan_y4, dan_y5])
 
-# CV2
+# SCV2
 Test_x2 = pd.concat([safe_x2, dan_x2])
 Test_y2 = pd.concat([safe_y2, dan_y2])
 Train_x2 = pd.concat([safe_x1, safe_x3, safe_x4, safe_x5, dan_x1, dan_x3, dan_x4, dan_x5])
 Train_y2 = pd.concat([safe_y1, safe_y3, safe_y4, safe_y5, dan_y1, dan_y3, dan_y4, dan_y5])
 
-# CV3
+# SCV3
 Test_x3 = pd.concat([safe_x3, dan_x3])
 Test_y3 = pd.concat([safe_y3, dan_y3])
 Train_x3 = pd.concat([safe_x1, safe_x2, safe_x4, safe_x5, dan_x1, dan_x2, dan_x4, dan_x5])
 Train_y3 = pd.concat([safe_y1, safe_y2, safe_y4, safe_y5, dan_y1, dan_y2, dan_y4, dan_y5])
 
-# CV4
+# SCV4
 Test_x4 = pd.concat([safe_x4, dan_x4])
 Test_y4 = pd.concat([safe_y4, dan_y4])
 Train_x4 = pd.concat([safe_x1, safe_x2, safe_x3, safe_x5, dan_x1, dan_x2, dan_x3, dan_x5])
 Train_y4 = pd.concat([safe_y1, safe_y2, safe_y3, safe_y5, dan_y1, dan_y2, dan_y3, dan_y5])
 
-# CV5
+# SCV5
 Test_x5 = pd.concat([safe_x5, dan_x5])
 Test_y5 = pd.concat([safe_y5, dan_y5])
 Train_x5 = pd.concat([safe_x1, safe_x2, safe_x3, safe_x4, dan_x1, dan_x2, dan_x3, dan_x4])
 Train_y5 = pd.concat([safe_y1, safe_y2, safe_y3, safe_y4, dan_y1, dan_y2, dan_y3, dan_y4])
+
+# SMOTE(Oversampling)
+method = SMOTE()
+X_smote1, y_smote1 = method.fit_resample(Train_x1, Train_y1)
+
+# Random forest training and testing (SCV)
+rf = RandomForestClassifier(n_estimators=300, max_leaf_nodes=70, n_jobs=-1)
+rf.fit(X_smote1, y_smote1)
+Pred_SCV1 = rf.predict(Test_x1)
+
+# Performance of RF 
+accuracy_rf = accuracy_score(Test_y1,Pred_SCV1)
+f1_rf = f1_score(Test_y1,Pred_SCV1)
+roc_score = roc_auc_score(Test_y1, Pred_SCV1)
+print('Accuracy: ', accuracy_rf)
+print('F1 score: ', f1_rf)
+print('ROC AUC Score: ', roc_score)
