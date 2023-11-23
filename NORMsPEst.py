@@ -178,6 +178,7 @@ elif run_flg == 1:
     print(con_sum)
     print("Average Accuracy is {} %.".format(sum(np.diag(con_sum)) / sum(sum(con_sum)) * 100))
 
+# Loading Data 
 data = pd.read_csv('./Data/Radon.txt', sep='  ', names=['G_label','Depth','T','pH','Eh','EC','DO','HCO3','Rn'])
 
 # Average Performance of Random-undersampling
@@ -200,7 +201,7 @@ data = pd.read_csv('./Data/Radon.txt', sep='  ', names=['G_label','Depth','T','p
       total = total + accuracy_score(Y_test, Pred)
   print(total/N)
 
-# Concentration of Radon (Threshold = 100Bq/l)
+# Concentration of Radon (Threshold of Radon = 100Bq/l, Threshold of Uranium = 30ppm)
 dan_Rn = data[data['Rn'] == 1]
 safe_Rn = data[data['Rn'] == 0]
 dan_y = dan_Rn['Rn']
