@@ -1,0 +1,76 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+
+# Hyperparameter
+cl = 100 
+dim_output = 2
+
+# Normalization (0 ~ 1) of data
+def normalization(dat):
+    minv = np.min(dat)
+    maxv = np.max(dat)
+    dat = (dat - minv) / (maxv - minv)
+    return dat, minv, maxv
+
+# Data loading
+dat_file_nam = './Data/Radon.txt' 
+dat_raw = np.loadtxt(dat_file_nam).astype(np.float32)
+
+# Data preprocessing
+n_excss_tgt = np.sum(dat_raw[:, 3:4] >= cl)
+is_excss = np.reshape([dat_raw[:, 3:4] >= cl], len(dat_raw), 1)
+is_non_excss = np.reshape([dat_raw[:, 3:4] < cl], len(dat_raw), 1)
+excss_dat = dat_raw[is_excss, :]
+non_excss_dat = dat_raw[is_non_excss, :]
+
+    for ii in range(n_iteration):
+        shff_no = np.random.permutation(non_excss_dat.shape[0])
+        non_excss_dat = non_excss_dat[shff_no, :]
+        non_excss_dat = non_excss_dat[:len(excss_dat), :]
+        dat = np.concatenate((excss_dat, non_excss_dat), axis=0)
+
+        tgt = dat[:, 3:4]  # target variable (Rn)
+        g = dat[:, 1:2]  # geology type
+        expl = dat[:, 4:]  # applied explanatory variables
+        loc_idx = dat[:, 0:1]  # location index
+        n_dat = np.shape(dat)[0]
+        n_trn = np.int(np.floor(n_trn_rate * n_dat))
+        n_tst = n_dat - n_trn
+        n_rock = np.int(np.max(dat[:, 1]))  # number of rock type
+
+        expl_norm = np.zeros(np.shape(expl))
+        for i in range(np.shape(expl)[1]):
+            expl_norm[:, i], min_expl, max_expl = normalization(expl[:, i])
+
+        # One-hot encoding
+        dum = np.zeros([len(g), np.int(np.max(g)) - 1])
+        for i in range(len(g)):
+            if g[i] == 1:  # G1
+                dum[i, :] = [1, 0, 0, 0, 0]
+            elif g[i] == 2:  # G2
+                dum[i, :] = [0, 1, 0, 0, 0]
+            elif g[i] == 3:  # G3
+                dum[i, :] = [0, 0, 1, 0, 0]
+            elif g[i] == 4:  # G4
+                dum[i, :] = [0, 0, 0, 1, 0]
+            elif g[i] == 5:  # G5
+                dum[i, :] = [0, 0, 0, 0, 1]
+
+        # Output data
+        T = np.zeros([len(tgt), dim_output])
+        for i in range(len(tgt)):
+            if tgt[i] >= cl:
+                T[i, :] = [1, 0]
+            else:
+                T[i, :] = [0, 1]
+
+        # Input data
+        XX = np.concatenate((dum, expl_norm), axis=1)
+        shff_no = np.random.permutation(XX.shape[0])
+        IN = XX[shff_no, :]
+        OUT = T[shff_no, :]
+        loc_idx = loc_idx[shff_no]
+        tgt = tgt[shff_no]
+        x_train, x_test = IN[:n_trn, :], IN[n_trn:, :]
+        y_train, y_test = OUT[:n_trn, :], OUT[n_trn:, :]
