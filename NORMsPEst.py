@@ -104,9 +104,9 @@ if run_flg == 0:
 
         dim_input = np.shape(IN)[1]
 
-        rnd_clf = RandomForestClassifier(n_estimators=300, max_leaf_nodes=100, n_jobs=-1)
-        rnd_clf.fit(x_train, y_train[:, 0:1])
-        y_pred = rnd_clf.predict_proba(x_test)
+        rnd_under = RandomForestClassifier(n_estimators=300, max_leaf_nodes=100, n_jobs=-1)
+        rnd_under.fit(x_train, y_train[:, 0:1])
+        y_pred = rnd_under.predict_proba(x_test)
         prd_label = np.zeros([len(y_pred), 1])
         for m in range(len(y_pred)):
             if y_pred[m, 0] >= y_pred[m, 1]:
@@ -153,9 +153,9 @@ elif run_flg == 1:
     con_sum = np.zeros([2, 2])
     for mm in range(n_iteration):
 
-        rnd_clf = RandomForestClassifier(n_estimators=300, max_leaf_nodes=70, n_jobs=-1)
-        rnd_clf.fit(x_train, y_train[:, 0:1])
-        y_pred = rnd_clf.predict_proba(x_test)
+        rnd_under = RandomForestClassifier(n_estimators=300, max_leaf_nodes=70, n_jobs=-1)
+        rnd_under.fit(x_train, y_train[:, 0:1])
+        y_pred = rnd_under.predict_proba(x_test)
         prd_label = np.zeros([len(y_pred), 1])
         for m in range(len(y_pred)):
             if y_pred[m, 0] >= y_pred[m, 1]:
@@ -181,6 +181,11 @@ elif run_flg == 1:
 # Loading Data 
 data = pd.read_csv('./Data/Radon.txt', sep='  ', names=['G_label','Depth','T','pH','Eh','EC','DO','HCO3','Rn'])
 
+# Random forest training and testing (SCV)
+rnf_RU = RandomForestClassifier(n_estimators=300, max_leaf_nodes=70, n_jobs=-1)
+rnf_RU.fit(X_smote1, y_smote1)
+Pred_SCV1 = rnf_RU.predict(Test_x1)
+
 # Average Performance of Random-undersampling
   y = data['Rn']
   num_data = data.drop(['Rn'], axis=1)
@@ -195,8 +200,8 @@ data = pd.read_csv('./Data/Radon.txt', sep='  ', names=['G_label','Depth','T','p
       X_resampled, y_resampled = rus.fit_resample(x_normalization, y)
       X_resampled, y_resampled = rus.fit_resample(x_normalization, y)
       X_train, X_test, Y_train, Y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=20)
-      rf.fit(X_train, Y_train)
-      Pred = rf.predict(X_test)
+      rnf_RU.fit(X_train, Y_train)
+      Pred = rnf_RU.predict(X_test)
       # print("Accuracy : {0:.3f}".format(accuracy_score(Y_test, Pred)))
       total = total + accuracy_score(Y_test, Pred)
   print(total/N)
@@ -260,14 +265,14 @@ method = SMOTE()
 X_smote1, y_smote1 = method.fit_resample(Train_x1, Train_y1)
 
 # Random forest training and testing (SCV)
-rf = RandomForestClassifier(n_estimators=300, max_leaf_nodes=70, n_jobs=-1)
-rf.fit(X_smote1, y_smote1)
-Pred_SCV1 = rf.predict(Test_x1)
+rnf_over = RandomForestClassifier(n_estimators=300, max_leaf_nodes=70, n_jobs=-1)
+rnf_over.fit(X_smote1, y_smote1)
+Pred_SCV1 = rnf_over.predict(Test_x1)
 
 # Performance of RF
-accuracy_rf = accuracy_score(Test_y1,Pred_SCV1)
-f1_rf = f1_score(Test_y1,Pred_SCV1)
+accuracy_rnf = accuracy_score(Test_y1,Pred_SCV1)
+f1_rnf = f1_score(Test_y1,Pred_SCV1)
 roc_score = roc_auc_score(Test_y1, Pred_SCV1)
-print('Accuracy: ', accuracy_rf)
-print('F1 score: ', f1_rf)
+print('Accuracy: ', accuracy_rnf)
+print('F1 score: ', f1_rnf)
 print('ROC AUC Score: ', roc_score)
